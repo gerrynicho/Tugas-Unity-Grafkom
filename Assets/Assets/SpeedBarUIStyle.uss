@@ -1,0 +1,6 @@
+:root {
+}
+
+.speedbar-size {
+    width: 300px;
+}
