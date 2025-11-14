@@ -14,8 +14,13 @@ public class PlayerController : MonoBehaviour
     private float movementY;
     public float speed = 0;
     public float velocity = 0f;
-    public TextMeshProUGUI countText;
-    public GameObject winTextObject;
+    public TextMeshProUGUI countText; // HUD
+    public GameObject winTextObject; // UI
+
+    public TextMeshProUGUI timerText;
+    private float currentTime = 0f;
+    private bool isTimerRunning = true;
+
     public static bool isGameOver = false;
     public Action OnSpeedChange;
 
@@ -24,6 +29,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         velocity = 0f; // Range is 0 to speed
         count = 0;
+        currentTime = 0f;
+        isTimerRunning = true;
         setCountText();
         isGameOver = false;
         winTextObject.SetActive(false);
@@ -36,6 +43,19 @@ public class PlayerController : MonoBehaviour
         movementY = movementVector.y;
     }
 
+    void Update()
+    {
+        if (isTimerRunning && !isGameOver)
+        {
+            currentTime += Time.deltaTime;
+            TimeSpan timeSpan = TimeSpan.FromSeconds(currentTime);
+            timerText.text = string.Format("Time: {0:D2}:{1:D2}:{2:D2}",
+                timeSpan.Hours,
+                timeSpan.Minutes,
+                timeSpan.Seconds);
+        }
+    }
+
     void setCountText()
     {
         countText.text = "Count: " + count.ToString();
@@ -46,6 +66,8 @@ public class PlayerController : MonoBehaviour
             isGameOver = true;
             speed = 0;
             velocity = 0f;
+            isTimerRunning = false;
+            TextMeshProUGUI winText = winTextObject.GetComponent<TextMeshProUGUI>();
             OnSpeedChange?.Invoke(); // We dont know if anyone is listening so it might be null
         }
     }
@@ -74,7 +96,8 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Enemy") && !isGameOver)
-        {
+        {   
+            isTimerRunning = false;
             Destroy(this.gameObject);
             winTextObject.gameObject.SetActive(true);
             winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
