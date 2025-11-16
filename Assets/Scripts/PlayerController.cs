@@ -3,8 +3,6 @@ using UnityEngine.InputSystem;
 using TMPro;
 using System;
 
-
-
 public class PlayerController : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -24,6 +22,8 @@ public class PlayerController : MonoBehaviour
     public static bool isGameOver = false;
     public Action OnSpeedChange;
 
+    public GameUIHandler speeduihandler;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -32,7 +32,8 @@ public class PlayerController : MonoBehaviour
         currentTime = 0f;
         isTimerRunning = true;
         setCountText();
-        isGameOver = false;
+        // UI should be in control when to start game
+        //isGameOver = false; 
         winTextObject.SetActive(false);
     }
 
@@ -101,6 +102,7 @@ public class PlayerController : MonoBehaviour
             Destroy(this.gameObject);
             winTextObject.gameObject.SetActive(true);
             winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
+            speeduihandler.SetSpeed(speed);
         }
     }
 }

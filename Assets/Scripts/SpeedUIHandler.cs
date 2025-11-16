@@ -8,6 +8,13 @@ public class GameUIHandler : MonoBehaviour
     private Label m_SpeedLabel;
     private VisualElement m_SpeedBarMask;
 
+    public void SetSpeed(float velocity)
+    {
+        m_SpeedLabel.text = velocity.ToString("F2");
+        float speedRatio = (float) velocity / (playerController.speed * Mathf.Sqrt(2f)); // speed is constant, is set by dev
+        float speedPercent = Mathf.Lerp(8, 88, speedRatio);
+        m_SpeedBarMask.style.width = Length.Percent(speedPercent);
+    }
 
     private void Start()
     {
